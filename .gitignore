@@ -2,6 +2,7 @@
 
 # custom
 mongo/
+.env
 
 # dependencies
 /node_modules

@@ -7,9 +7,8 @@ type Data = {
   method: string;
 }
 
-export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>
-) {
+export default function handler( req: NextApiRequest,res: NextApiResponse<Data> ) {
+  console.log(process.env);
+
   res.status(200).json({ ok: true, name: 'John Doe', method: req.method || 'No hay método' })
 }
