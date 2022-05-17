@@ -14,7 +14,7 @@ export default function handler( req: NextApiRequest, res: NextApiResponse<Data>
       return getEntries( res );
     case 'POST':
       return postEntry( req, res );
-      default:
+    default:
         return res.status(405).json({ message: 'Method not allowed' });
   }
 
