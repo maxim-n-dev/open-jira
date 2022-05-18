@@ -8,6 +8,7 @@ interface ContextProps {
     //Methods
     addNewEntry: (description: string) => void;
     updateEntry: (entry: Entry) => void;
+    deleteEntry: (id:string) => void;
 }
 
 

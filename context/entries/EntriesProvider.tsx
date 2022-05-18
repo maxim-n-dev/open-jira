@@ -33,11 +33,22 @@ export const EntriesProvider: FC = ({ children }) => {
     });
   }
 
-  const updateEntry = ( entry: Entry ) => {
+  const updateEntry = async ( entry: Entry ) => {
+
+    const { data } = await entriesApi.put<Entry>('/entries/' + entry._id,  entry );
+
     dispatch({
       type: '[Entries] Entry-Update',
-      payload: entry
+      payload: data
     })
+  }
+  
+  const deleteEntry = async (id: string) => {
+    const respo = await entriesApi.delete('/entries/'+ id);
+
+    if (respo.status === 200) {
+      dispatch({ type: '[Entries] Remove-Entry', payload: id });  
+    }
   }
 
 
@@ -58,7 +69,8 @@ export const EntriesProvider: FC = ({ children }) => {
 
       //Methods
       addNewEntry,
-      updateEntry
+      updateEntry,
+      deleteEntry
   }}>
       { children }
     </EntriesContext.Provider>
