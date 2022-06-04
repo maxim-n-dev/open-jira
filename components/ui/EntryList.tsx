@@ -43,7 +43,6 @@ export const EntryList: FC<Props> = ({ status }) => {
 
 
   return (
-    // TODO: aquí haremos drop
     <div 
       className={`${isDragging && styles.dragging}`}
       onDrop={ onDropEntry }
@@ -59,8 +58,6 @@ export const EntryList: FC<Props> = ({ status }) => {
             scrollbarColor: 'yellow'
         }}
       >
-      
-      {/* TODO: cambiará dependiendo de si estoy haciendo drag o no */}
         <List sx={{ opacity: isDragging ? 0.4 : 1, transition: 'all 0.3s' }}>
           {
             entriesByStatus.map(entry => (

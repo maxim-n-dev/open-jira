@@ -3,18 +3,20 @@ import { DragEvent, FC, useContext } from "react"
 import { UIContext } from "../../context/ui"
 import { Entry } from "../../interfaces"
 import { EntriesContext } from '../../context/entries/';
+import { useRouter } from "next/router";
 
 interface Props {
   entry: Entry;
 }
 export const EntryCard : FC<Props> = ({ entry }) => {
 
+  const router = useRouter();
+
   const { startDragging, endDragging } = useContext( UIContext );
   const { deleteEntry } = useContext( EntriesContext );
 
   const onDragStart = (event: DragEvent<HTMLDivElement>) => {
     event.dataTransfer.setData('text', entry._id);
-    //todo: modificar el estado, para indicar que estoy haciendo drag
     startDragging();
   }
 
@@ -23,8 +25,11 @@ export const EntryCard : FC<Props> = ({ entry }) => {
   }
 
   const onDragEnd = () => {
-    //todo: Fin OnDrag
     endDragging();
+  }
+
+  const onClick = () => {
+    router.push('/entries/'+entry._id);
   }
   
   const addedTime = new Date(new Date().getTime() - entry.createdAt).getMinutes()
@@ -32,12 +37,13 @@ export const EntryCard : FC<Props> = ({ entry }) => {
   return (
     
     <Card
-      onClick= { deleteEntryHandler }
+      onClick= { onClick }
       sx={{ marginBottom: 1 }}
       // Eventos de drag
       draggable
       onDragStart = { onDragStart }
       onDragEnd = { onDragEnd }
+      
     >
       <CardActionArea>
         <CardContent>
