@@ -4,6 +4,7 @@ import { UIContext } from "../../context/ui"
 import { Entry } from "../../interfaces"
 import { EntriesContext } from '../../context/entries/';
 import { useRouter } from "next/router";
+import { dateFunctions } from "../../utils";
 
 interface Props {
   entry: Entry;
@@ -21,7 +22,7 @@ export const EntryCard : FC<Props> = ({ entry }) => {
   }
 
   const deleteEntryHandler = () => {
-    deleteEntry(entry._id);
+    deleteEntry(entry._id, true);
   }
 
   const onDragEnd = () => {
@@ -32,7 +33,7 @@ export const EntryCard : FC<Props> = ({ entry }) => {
     router.push('/entries/'+entry._id);
   }
   
-  const addedTime = new Date(new Date().getTime() - entry.createdAt).getMinutes()
+  const addedTime = dateFunctions.getFormatDistanceToNow(entry.createdAt);
 
   return (
     
@@ -55,7 +56,7 @@ export const EntryCard : FC<Props> = ({ entry }) => {
         </CardContent>
         
         <CardActions sx={{ display: 'flex', justifyContent:'end', paddingRight: 2 }}>
-          <Typography variant='body2'> { addedTime } min ago </Typography>
+          <Typography variant='body2'> Hace { addedTime }</Typography>
         </CardActions>
       </CardActionArea>
 

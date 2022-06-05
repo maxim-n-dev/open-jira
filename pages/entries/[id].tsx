@@ -14,8 +14,6 @@ import { capitalize,
     FormControlLabel, 
     Radio, 
     IconButton,
-    Snackbar,
-    Alert
    } from '@mui/material';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
@@ -25,10 +23,10 @@ import { Entry, EntryStatus } from '../../interfaces';
 import { dbEntries } from '../../database';
 import { EntriesContext } from '../../context/entries';
 import { useRouter } from 'next/router';
+import { formatDistance, subDays } from 'date-fns';
+import { dateFunctions } from '../../utils';
 
 const validStatus: EntryStatus[] = ['pending', 'in-progress','completed'];
-
-const snackbarAutoHideTime: number = 6000;
 
 interface Props {
   entry: Entry
@@ -38,12 +36,14 @@ export const EntryPage: FC<Props> = ({ entry }) => {
 
   const { description, status:estado, createdAt } = entry;
 
+  const fechaCreacion = dateFunctions.getFormatDistanceToNow(entry.createdAt);
+
   const [inputValue, setinputValue] = useState(description);
   const [status, setStatus] = useState<EntryStatus>(estado);
   const [touched, setTouched] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const { updateEntry } = useContext(EntriesContext);
+  const { updateEntry, deleteEntry } = useContext(EntriesContext);
 
   const router = useRouter();
   
@@ -68,10 +68,16 @@ export const EntryPage: FC<Props> = ({ entry }) => {
       status
     };
 
-    updateEntry(updatedEntry);
+    updateEntry(updatedEntry, true);
     setOpen(true);
 
     router.push('/');
+  }
+
+  const deleteEntryHandler = () => {
+    deleteEntry(entry._id, true);
+
+    router.replace('/');
   }
 
 
@@ -94,7 +100,7 @@ export const EntryPage: FC<Props> = ({ entry }) => {
           <Card>
             <CardHeader
               title={`Entrada:`}
-              subheader={`Creada hace: ${ createdAt } minutos`}
+              subheader={`Hace: ${ fechaCreacion }`}
             >
             </CardHeader>
             <CardContent>
@@ -158,16 +164,11 @@ export const EntryPage: FC<Props> = ({ entry }) => {
               right: 30,
               backgroundColor: 'error.main'
           }}
+
+          onClick={deleteEntryHandler}
         >
           <DeleteOutlinedIcon />
-        </IconButton>
-        <Snackbar open={open} autoHideDuration={snackbarAutoHideTime} onClose={handleClose}>
-          <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-            La entrada se ha guardado correctamente
-          </Alert>
-        </Snackbar>
-
-        
+        </IconButton>       
     </Layout>
 
     

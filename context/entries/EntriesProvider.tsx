@@ -1,4 +1,7 @@
 import { FC, useEffect, useReducer } from 'react';
+
+import { SnackbarProvider, useSnackbar } from 'notistack';
+
 import { Entry } from '../../interfaces';
 import { EntriesContext, entriesReducer } from '.';
 import { entriesApi } from '../../apis';
@@ -15,6 +18,8 @@ const ENTRIES_INITIAL_STATE: EntriesState = {
 export const EntriesProvider: FC = ({ children }) => {
 
   const [state, dispatch] = useReducer(entriesReducer, ENTRIES_INITIAL_STATE);
+
+  const { enqueueSnackbar } = useSnackbar();
 
   const addNewEntry = async ( description: string ) => {
 
@@ -33,9 +38,20 @@ export const EntriesProvider: FC = ({ children }) => {
     });
   }
 
-  const updateEntry = async ( entry: Entry ) => {
+  const updateEntry = async ( entry: Entry, showSnackbar = false ) => {
 
     const { data } = await entriesApi.put<Entry>('/entries/' + entry._id,  entry );
+
+    if(showSnackbar){
+      enqueueSnackbar('Entrada actualizada',{
+        variant: 'success',
+        autoHideDuration: 1500,
+        anchorOrigin: {
+          horizontal: 'right',
+          vertical:'top'
+        }
+      }) 
+    }
 
     dispatch({
       type: '[Entries] Entry-Update',
@@ -43,11 +59,22 @@ export const EntriesProvider: FC = ({ children }) => {
     })
   }
   
-  const deleteEntry = async (id: string) => {
+  const deleteEntry = async (id: string, showSnackbar: boolean) => {
     const respo = await entriesApi.delete('/entries/'+ id);
-
+    
     if (respo.status === 200) {
       dispatch({ type: '[Entries] Remove-Entry', payload: id });  
+    }
+
+    if(showSnackbar) {
+      enqueueSnackbar('Entrada eliminada correctamente', {
+        variant: 'success',
+        autoHideDuration: 2000,
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right'
+        }
+      })
     }
   }
 
